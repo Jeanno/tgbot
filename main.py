@@ -12,7 +12,7 @@ info_list = None
 reply_markup = None
 last_update = None
 
-def setup_info():
+def load_info():
     info_lock.acquire()
     global info_list, reply_markup, last_update
 
@@ -45,12 +45,12 @@ def setup_info():
 
 
 def info(bot, update):
-    setup_info()
+    load_info()
     update.message.reply_text('請選擇：', reply_markup=reply_markup)
 
 
 def button(bot, update):
-    setup_info()
+    load_info()
     query = update.callback_query
 
     message = "發生錯誤，請再試。"
@@ -81,6 +81,9 @@ def main():
 
 
 if __name__ == '__main__':
-    setup_info()
-    main()
+    while True:
+        try:
+            main()
+        except:
+            print("Unexpected error:", sys.exc_info()[0])
 
