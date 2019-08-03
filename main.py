@@ -1,21 +1,31 @@
+from datetime import datetime, timedelta
+import threading
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 
 import info_db
 import config
 
+info_lock = threading.Lock()
 info_list = None
 reply_markup = None
+last_update = None
 
 def setup_info():
-    global info_list, reply_markup
+    info_lock.acquire()
+    global info_list, reply_markup, last_update
 
-    info_list = info_db.fetch()
+    if last_update and datetime.now() < last_update + timedelta(minutes=1):
+        info_lock.release()
+        return
+
+    info_list_local = info_db.fetch()
 
     keyboard = []
     current_ary = []
     count = 0
-    for info in info_list:
+    for info in info_list_local:
         if count == 0:
             count += 1
             continue
@@ -27,7 +37,11 @@ def setup_info():
     if len(current_ary) > 0:
         keyboard.append(current_ary)
 
+    info_list = info_list_local
     reply_markup = InlineKeyboardMarkup(keyboard)
+    last_update = datetime.now()
+    print("Updated")
+    info_lock.release()
 
 
 def info(bot, update):
