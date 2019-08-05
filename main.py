@@ -4,6 +4,9 @@ import threading
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 
+import google.cloud.logging
+import logging
+
 import info_db
 import config
 
@@ -11,6 +14,9 @@ info_lock = threading.Lock()
 info_list = None
 reply_markup = None
 last_update = None
+
+client = google.cloud.logging.Client()
+client.setup_logging()
 
 def load_info():
     info_lock.acquire()
@@ -40,7 +46,7 @@ def load_info():
     info_list = info_list_local
     reply_markup = InlineKeyboardMarkup(keyboard)
     last_update = datetime.now()
-    print("{} - Finished updating info".format(str(datetime.now())))
+    logging.info("{} - Finished updating info".format(str(datetime.now())))
     info_lock.release()
 
 
@@ -59,7 +65,7 @@ def button(bot, update):
             message = info[1]
             break
 
-    print("{} - Query {}".format(str(datetime.now()), info[0]))
+    logging.info("{} - Query {}".format(str(datetime.now()), info[0]))
     query.edit_message_text(text=message + " ", reply_markup=reply_markup)
 
 
@@ -86,5 +92,5 @@ if __name__ == '__main__':
         try:
             main()
         except:
-            print("Unexpected error:", sys.exc_info()[0])
+            logging.error("Unexpected error:", sys.exc_info()[0])
 
