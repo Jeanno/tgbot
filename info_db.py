@@ -14,7 +14,7 @@ def fetch():
         # 'majorDimension': 'COLUMNS',
         'key': key
     }
-    r = session.get(url, params=params, timeout=1)
+    r = session.get(url, params=params, timeout=10)
     data = r.json()
     return data['values']
 
