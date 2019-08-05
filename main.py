@@ -40,7 +40,7 @@ def load_info():
     info_list = info_list_local
     reply_markup = InlineKeyboardMarkup(keyboard)
     last_update = datetime.now()
-    print("Updated")
+    print("{} - Finished updating info".format(str(datetime.now())))
     info_lock.release()
 
 
@@ -59,6 +59,7 @@ def button(bot, update):
             message = info[1]
             break
 
+    print("{} - Query {}".format(str(datetime.now()), info[0]))
     query.edit_message_text(text=message + " ", reply_markup=reply_markup)
 
 
