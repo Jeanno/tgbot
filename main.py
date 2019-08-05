@@ -71,7 +71,7 @@ def button(bot, update):
 
 def error(bot, update, e):
     """Log Errors caused by Updates."""
-    logger.warning('Update "%s" caused error "%s"', update, e)
+    logging.warning('Update "%s" caused error "%s"', update, e)
 
 
 def main():
