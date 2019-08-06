@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import threading
+import time
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
@@ -71,7 +72,7 @@ def button(bot, update):
 
 def error(bot, update, e):
     """Log Errors caused by Updates."""
-    logging.warning('Update "%s" caused error "%s"', update, e)
+    print('Update "%s" caused error "%s"', update, e)
 
 
 def main():
@@ -88,9 +89,5 @@ def main():
 
 
 if __name__ == '__main__':
-    while True:
-        try:
-            main()
-        except:
-            print("Unexpected error:", sys.exc_info()[0])
+    main()
 
