@@ -27,28 +27,32 @@ def load_info():
         info_lock.release()
         return
 
-    info_list_local = info_db.fetch()
-
-    keyboard = []
-    current_ary = []
-    count = 0
-    for info in info_list_local:
-        if count == 0:
+    try:
+        info_list_local = info_db.fetch()
+        keyboard = []
+        current_ary = []
+        count = 0
+        for info in info_list_local:
+            if count == 0:
+                count += 1
+                continue
+            current_ary.append(InlineKeyboardButton(info[0], callback_data=info[0]))
+            if len(current_ary) == 2:
+                keyboard.append(current_ary)
+                current_ary = []
             count += 1
-            continue
-        current_ary.append(InlineKeyboardButton(info[0], callback_data=info[0]))
-        if len(current_ary) == 2:
+        if len(current_ary) > 0:
             keyboard.append(current_ary)
-            current_ary = []
-        count += 1
-    if len(current_ary) > 0:
-        keyboard.append(current_ary)
 
-    info_list = info_list_local
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    last_update = datetime.now()
-    logging.info("{} - Finished updating info".format(str(datetime.now())))
-    info_lock.release()
+        info_list = info_list_local
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        last_update = datetime.now()
+        logging.info("{} - Finished updating info".format(str(datetime.now())))
+    except:
+        print('Error occur while updating info.')
+    finally:
+        info_lock.release()
+
 
 
 def info(bot, update):
